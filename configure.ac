@@ -71,6 +71,18 @@ fi
 cd "${owd}"
 rm -rf "${BUILDDIR}"
 
+
+## additional reporting/diagnostics for mac don't trust the above approach for mac
+RSysinfoName=$("${R_HOME}/bin/Rscript" --vanilla -e 'cat(Sys.info()[["sysname"]])')
+AC_MSG_CHECKING([for mac OS])
+if test x"${RSysinfoName}" = x"Darwin"; then
+   AC_MSG_RESULT([found, not trusting "already works"])
+   openmp_already_works="no"
+else
+   AC_MSG_RESULT([not found])
+fi # end mac check
+
+
 ## If the above checks failed, then perform other heuristics
 ## based on the compiler version, etc.
 if test x"${openmp_already_works}" = x"no"; then
@@ -109,7 +121,6 @@ if test x"${openmp_already_works}" = x"no"; then
     ## Check for Apple LLVM
 
     AC_MSG_CHECKING([for macOS])
-    RSysinfoName=$("${R_HOME}/bin/Rscript" --vanilla -e 'cat(Sys.info()[["sysname"]])')
 
     if test x"${RSysinfoName}" = x"Darwin"; then
         AC_MSG_RESULT([found])
